@@ -34,13 +34,6 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        // テストで変数宣言
-        // 文字列
-        var a : String = "inamuradesu"
-        // 配列
-        var hairetu1 = arrayOf(1, 2, 3);
-        // ?が型名の後に付いている場合はnullを許容する
-        var hairetu2 : Array<Int?> = arrayOfNulls(3)
     }
 
 
