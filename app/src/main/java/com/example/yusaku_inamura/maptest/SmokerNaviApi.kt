@@ -51,42 +51,16 @@ class SmokerNaviApi (){
                 .get()
                 .build()
         // APIアクセス
-//        val response: Response = client.newCall(request).execute()
-//        // レスポンス返却時の処理
-//        var res = response.body()!!.string()
-//        val jsons = JSONArray(res)
-//        // 取得したデータをループ
-//        for (i in 0 until jsons.length()) {
-//            val json = jsons.getJSONObject(i)
-//            val place = PlaceDao(json.getInt("id"), json.getString("name"), json.getString("description"), json.getDouble("latitude"), json.getDouble("longitude"))
-//            places.add(place)
-//        }
-
-        client.newCall(request).enqueue(object : Callback {
-            override
-            fun onFailure(call: Call, e: IOException) {
-                // 失敗した場合
-                e.printStackTrace()
-                Log.d("error", e.message)
-                throw e
-            }
-
-            @Throws(IOException::class)
-            override
-            fun onResponse(call: Call, response: Response) {
-                // レスポンス返却時の処理
-                var res = response.body()!!.string()
-                val jsons = JSONArray(res)
-                // 取得したデータをループ
-                for (i in 0 until jsons.length()) {
-                    val json = jsons.getJSONObject(i)
-                    val place = PlaceDao(json.getInt("id"), json.getString("name"), json.getString("description"), json.getDouble("latitude"), json.getDouble("longitude"))
-                    places.add(place)
-                }
-            }
-
+        val response: Response = client.newCall(request).execute()
+        // レスポンス返却時の処理
+        var res = response.body()!!.string()
+        val jsons = JSONArray(res)
+        // 取得したデータをループ
+        for (i in 0 until jsons.length()) {
+            val json = jsons.getJSONObject(i)
+            val place = PlaceDao(json.getInt("id"), json.getString("name"), json.getString("description"), json.getDouble("latitude"), json.getDouble("longitude"))
+            places.add(place)
         }
-        )
 
         return places
 
@@ -96,8 +70,6 @@ class SmokerNaviApi (){
         override fun getAcceptedIssuers(): Array<X509Certificate> {
             return arrayOf()
         }
-//        val acceptedIssuers: Array<java.security.cert.X509Certificate>
-//            get() = arrayOf()
 
         @Throws(CertificateException::class)
         override

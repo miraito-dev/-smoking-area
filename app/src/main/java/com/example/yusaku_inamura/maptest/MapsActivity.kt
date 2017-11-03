@@ -44,11 +44,17 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         var mMap = googleMap
 
-//        setPlaces()
+        val task = object : AsyncTask<Void, Void, Void>() {
+            override fun doInBackground(vararg p0: Void?): Void? {
+                setPlaces(mMap)
+                return null
+            }
+        }
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         mMap.isMyLocationEnabled = true
     }
 
-    private fun setPlaces() {
+    private fun setPlaces(googleMap: GoogleMap) {
         val types: MutableList<String> = mutableListOf<String>()
         val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(types)
 
@@ -71,7 +77,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
                 runOnUiThread {
                     // アイコン追加
-                    mMap!!.addMarker(mOption)
+                    googleMap!!.addMarker(mOption)
                 }
 
             }
