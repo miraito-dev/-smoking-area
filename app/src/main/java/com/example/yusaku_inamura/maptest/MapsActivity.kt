@@ -1,12 +1,10 @@
 package com.example.yusaku_inamura.maptest
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.support.v4.app.FragmentActivity
 import android.os.Bundle
 import android.util.Log
 
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -14,12 +12,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import okhttp3.*
-import org.json.JSONObject
 import org.json.JSONArray
 import java.io.IOException
 import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 import javax.security.cert.CertificateException
 
@@ -49,113 +44,38 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-//        val spot = LatLng(35.814238132208, 139.80168630369)
-//        // マーカー用のカスタム画像を作成
-//        var iconimg = BitmapDescriptorFactory.fromResource(R.drawable.photo)
-//
-//        // マーカー設定用オブジェクト生成
-//        val mOption = MarkerOptions()
-//        // 位置情報設定
-//        mOption.position(spot)
-//        // アイコンのタイトル設定
-//        mOption.title("谷塚駅西口喫煙所")
-//        // アイコン画像設定
-//        mOption.icon(iconimg)
-
-//        // アイコン追加
-//        mMap!!.addMarker(mOption)
-//        mMap!!.moveCamera(CameraUpdateFactory.newLatLng(spot))
-        search()
+//        setPlaces()
     }
 
-    private fun search() {
-        // SSL証明書のエラーを無視させる。
-        val clientBuilder = OkHttpClient.Builder()
+    private fun setPlaces() {
+        val types: MutableList<String> = mutableListOf<String>()
+        val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(types)
 
         try {
-            val sslContext = SSLContext.getInstance("SSL")
 
-            // MyX509TrustManager を割り当てる
-            // MyX509TrustManager は全ての証明書を許可するようにしている
-            sslContext.init(null, arrayOf<TrustManager>(MyX509TrustManager()), java.security.SecureRandom())
-            clientBuilder.sslSocketFactory(sslContext.getSocketFactory())
-        } catch (e: Exception) {
-            Log.d("inamura", "SSL Setting Error")
-        }
+            for (i in 0 until places.count()) {
+                val place = places.get(i)
+                val spot = LatLng(place.latitude, place.longitude)
 
+                // マーカー設定用オブジェクト生成
+                val mOption = MarkerOptions()
+                // 位置情報設定
+                mOption.position(spot)
+                // アイコンのタイトル設定
+                mOption.title(place.name)
+                // マーカー用のカスタム画像を作成
+                var iconimg = BitmapDescriptorFactory.fromResource(R.drawable.photo)
+                // アイコン画像設定
+                mOption.icon(iconimg)
 
-        val request = Request.Builder()
-                .url("https://dev.smokernavi.dnsalias.net/api/mapNoLogin/search")
-                .get()
-                .build()
-
-        val client = clientBuilder.build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override
-            fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                Log.d("error", e.message)
-            }
-
-            @Throws(IOException::class)
-            override
-            fun onResponse(call: Call, response: Response) {
-                var res = response.body()!!.string()
-                try {
-                    val jsons = JSONArray(res)
-
-                    for (i in 0 until jsons.length()) {
-                        val json = jsons.getJSONObject(i)
-                        val spot = LatLng(json.getString("latitude").toDouble(), json.getString("longitude").toDouble())
-                        // マーカー用のカスタム画像を作成
-                        var iconimg = BitmapDescriptorFactory.fromResource(R.drawable.photo)
-
-                        // マーカー設定用オブジェクト生成
-                        val mOption = MarkerOptions()
-                        // 位置情報設定
-                        mOption.position(spot)
-                        // アイコンのタイトル設定
-                        mOption.title(json.getString("name"))
-                        // アイコン画像設定
-                        mOption.icon(iconimg)
-
-                        runOnUiThread {
-                            // アイコン追加
-                            mMap!!.addMarker(mOption)
-                        }
-//                        mMap!!.moveCamera(CameraUpdateFactory.newLatLng(spot))
-//                        Log.d("json name", json.getString("name"))
-//                        Log.d("json latitude", json.getString("latitude"))
-//                        Log.d("json longitude", json.getString("longitude"))
-
-                    }
-
-                } catch (e: Exception) {
-                    Log.d("error", e.message)
+                runOnUiThread {
+                    // アイコン追加
+                    mMap!!.addMarker(mOption)
                 }
 
             }
-        }
-        )
-    }
-
-    internal class MyX509TrustManager : X509TrustManager {
-        override fun getAcceptedIssuers(): Array<X509Certificate> {
-            return arrayOf()
-        }
-//        val acceptedIssuers: Array<java.security.cert.X509Certificate>
-//            get() = arrayOf()
-
-        @Throws(CertificateException::class)
-        override
-        fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
-        }
-
-        @Throws(CertificateException::class)
-        override
-        fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+        } catch (e: Exception) {
+            Log.d("error", e.message)
         }
     }
 
