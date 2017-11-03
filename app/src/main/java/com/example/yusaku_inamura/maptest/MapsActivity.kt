@@ -42,9 +42,10 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        var mMap = googleMap
 
 //        setPlaces()
+        mMap.isMyLocationEnabled = true
     }
 
     private fun setPlaces() {
