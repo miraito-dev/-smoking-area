@@ -37,38 +37,16 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
     override public fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
-        val mapFragment: Fragment = MapFragment()
-        val selectFragment: Fragment = SelectTypeFragment()
+        val mapFragment: MapFragment = MapFragment()
+        val selectFragment: SelectTypeFragment = SelectTypeFragment()
         transaction.add(R.id.map ,mapFragment, "map")
         transaction.add(R.id.select_type ,selectFragment, "select")
         transaction.commit()
+        mapFragment.getMapAsync(this)
     }
 
-
-    override fun typeButtonClick(places: MutableList<PlaceDao>){
-
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    override fun onMapReady(googleMap: GoogleMap) {
-        var mMap = googleMap
-
-        val task = object : AsyncTask<Void, Void, Void>() {
-            override fun doInBackground(vararg p0: Void?): Void? {
-                setPlaces(mMap)
-                return null
-            }
-        }
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+    private fun initGoogleMapUi(mMap: GoogleMap)
+    {
         mMap.isMyLocationEnabled = true
 
         // 現在位置を移動してズームも変更
@@ -82,24 +60,31 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
         // UIが被らないようにPaddingを設定
         mMap.setPadding(0, 100, 0, 100)
 
-        /*
-        val listener = object : GoogleMap.OnInfoWindowClickListener {
-            override fun onInfoWindowClick(marker : Marker) {
-                val name = marker.title
-                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
+        mMap.setOnInfoWindowClickListener{ marker : Marker ->
+            val intent = Intent(activity, PlaceDetail::class.java)
+            val placeDao = PlaceDao(1, marker.title, "", marker.position.latitude, marker.position.longitude);
+
+            intent.putExtra("place_dao", placeDao)
+            startActivity(intent)
+        }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        var mMap = googleMap
+
+        val task = object : AsyncTask<Void, Void, Void>() {
+            override fun doInBackground(vararg p0: Void?): Void? {
+                setPlaces(mMap)
+                return null
             }
         }
-        mMap.setOnInfoWindowClickListener(listener)
-        */
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+        initGoogleMapUi(mMap)
+    }
 
-        /*
-        mMap.setOnInfoWindowClickListener( object : GoogleMap.OnInfoWindowClickListener{
-            override fun onInfoWindowClick(marker : Marker) {
-                val name = marker.title
-                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
-            }
-        })
-        */
+
+    override fun typeButtonClick(places: MutableList<PlaceDao>){
+
     }
 
     private fun setPlaces(googleMap: GoogleMap) {
@@ -131,6 +116,13 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
             }
         } catch (e: Exception) {
             Log.d("error", e.message)
+        }
+    }
+
+    private fun clearIcon(){
+        for (i in 0 until mMakerArray.count()){
+            // 順に取り出して削除
+            mMakerArray.get(i).remove()
         }
     }
 }
