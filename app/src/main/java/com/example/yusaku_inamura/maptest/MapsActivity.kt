@@ -71,9 +71,9 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 // アイコンのタイトル設定
                 mOption.title(place.name)
                 // マーカー用のカスタム画像を作成
-                var iconimg = BitmapDescriptorFactory.fromResource(R.drawable.photo)
-                // アイコン画像設定
-                mOption.icon(iconimg)
+//                var iconimg = BitmapDescriptorFactory.fromResource(R.drawable.photo)
+//                // アイコン画像設定
+//                mOption.icon(iconimg)
 
                 runOnUiThread {
                     // アイコン追加
