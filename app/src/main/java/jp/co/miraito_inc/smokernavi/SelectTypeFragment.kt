@@ -1,4 +1,4 @@
-package com.example.yusaku_inamura.maptest
+package jp.co.miraito_inc.smokernavi
 
 import android.app.Fragment
 import android.app.FragmentContainer

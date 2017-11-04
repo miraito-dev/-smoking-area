@@ -1,4 +1,4 @@
-package com.example.yusaku_inamura.maptest
+package jp.co.miraito_inc.smokernavi
 
 import android.os.AsyncTask
 import android.support.v4.app.FragmentActivity

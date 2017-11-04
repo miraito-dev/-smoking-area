@@ -1,4 +1,4 @@
-package com.example.yusaku_inamura.maptest
+package jp.co.miraito_inc.smokernavi
 
 /**
  * Created by yusaku_inamura on 2017/11/03.

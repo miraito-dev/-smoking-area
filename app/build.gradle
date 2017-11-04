@@ -6,7 +6,7 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "com.example.yusaku_inamura.maptest"
+        applicationId "jp.co.miraito_inc.smokernavi"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1

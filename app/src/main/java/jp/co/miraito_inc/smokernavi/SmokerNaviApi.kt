@@ -1,4 +1,4 @@
-package com.example.yusaku_inamura.maptest
+package jp.co.miraito_inc.smokernavi
 import android.util.Log
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
