@@ -18,15 +18,15 @@ import javax.security.cert.CertificateException
 class SmokerNaviApi (){
 
     init {
-        Log.d("SmokerNaviApi", "初期化を行いました")
+        
     }
 
     // 喫煙場所情報を取得する
-    public fun getPlaces(condition: MutableList<String>): MutableList<PlaceDao>{
+    public fun getPlaces(condition: String): MutableList<PlaceDao>{
         // http接続用クライアントを初期化
         val client = initHttpClient()
         // APIにアクセス
-        val places: MutableList<PlaceDao> = AccessApi(client)
+        val places: MutableList<PlaceDao> = AccessApi(client, condition)
 
         return places
     }
@@ -44,10 +44,10 @@ class SmokerNaviApi (){
     }
 
     // APIにアクセスし、結果を受け取る
-    private fun AccessApi(client: OkHttpClient): MutableList<PlaceDao>{
+    private fun AccessApi(client: OkHttpClient, condition: String): MutableList<PlaceDao>{
         val places: MutableList<PlaceDao> = mutableListOf<PlaceDao>()
         val request = Request.Builder()
-                .url("https://dev.smokernavi.dnsalias.net/api/mapNoLogin/search?")
+                .url("https://dev.smokernavi.dnsalias.net/api/mapNoLogin/search?type=${condition}")
                 .get()
                 .build()
         // APIアクセス

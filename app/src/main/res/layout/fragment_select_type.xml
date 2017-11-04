@@ -11,6 +11,7 @@
 
         <ToggleButton
             android:id="@+id/button_convenience"
+            android:tag="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -18,6 +19,7 @@
 
         <ToggleButton
             android:id="@+id/button_store"
+            android:tag="2"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -25,6 +27,7 @@
 
         <ToggleButton
             android:id="@+id/button_ashtray"
+            android:tag="3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -32,6 +35,7 @@
 
         <ToggleButton
             android:id="@+id/button_smoking_area"
+            android:tag="4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

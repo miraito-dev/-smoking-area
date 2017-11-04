@@ -45,9 +45,9 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
         mapFragment.getMapAsync(this)
     }
 
-    private fun initGoogleMapUi(mMap: GoogleMap)
+    private fun initGoogleMapUi(mMap: GoogleMap?)
     {
-        mMap.isMyLocationEnabled = true
+        mMap!!.isMyLocationEnabled = true
 
         // 現在位置を移動してズームも変更
         val latLnd: LatLng = LatLng(35.685175, 139.7528)
@@ -70,11 +70,11 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        var mMap = googleMap
+        mMap = googleMap
 
         val task = object : AsyncTask<Void, Void, Void>() {
             override fun doInBackground(vararg p0: Void?): Void? {
-                setPlaces(mMap)
+                setPlaces(SmokerNaviApi().getPlaces(""))
                 return null
             }
         }
@@ -84,13 +84,14 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
 
 
     override fun typeButtonClick(places: MutableList<PlaceDao>){
-
+        activity.runOnUiThread {
+            // マーカー
+            clearIcon()
+        }
+        setPlaces(places)
     }
 
-    private fun setPlaces(googleMap: GoogleMap) {
-        val types: MutableList<String> = mutableListOf<String>()
-        val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(types)
-
+    private fun setPlaces(places: MutableList<PlaceDao>) {
         try {
 
             for (i in 0 until places.count()) {
@@ -110,7 +111,7 @@ public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback
 
                 activity.runOnUiThread {
                     // アイコンを追加し、マーカー管理用のリストに追加
-                    mMakerArray.add(googleMap!!.addMarker(mOption))
+                    mMakerArray.add(mMap!!.addMarker(mOption))
                 }
 
             }

@@ -2,6 +2,7 @@ package jp.co.miraito_inc.smokernavi
 
 import android.app.Fragment
 import android.app.FragmentContainer
+import android.os.AsyncTask
 // もしapiレベル16以下に対応させたい場合はこれをimportするといいらしい
 //import android.support.v4.app.Fragment;
 import android.os.Bundle
@@ -30,6 +31,7 @@ public class SelectTypeFragment(): Fragment() {
     // Viewが生成完了した時点で呼ばれるメソッド
     override public  fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setEventListner(getButton())
     }
     // 現在のボタンの状態を取得し、テキストにして返却する
     public fun retType(separator: String): String{
@@ -44,9 +46,13 @@ public class SelectTypeFragment(): Fragment() {
                 // onの状態ではない場合は次へ
                 continue
             }
-            // onになっているボタンの種類を判別
-            Log.d("inamura", button.id.toString())
+            if(typeStr.isEmpty()){
+                typeStr = button.tag.toString()
+            }else{
+                typeStr += separator + button.tag.toString()
+            }
         }
+        // onになっているボタンの種類を判別
         return typeStr
     }
 
@@ -55,9 +61,15 @@ public class SelectTypeFragment(): Fragment() {
         for (i in 0 until buttonList.count()){
             val button: CompoundButton = buttonList.get(i)
             button.setOnClickListener {
-                val types: MutableList<String> = mutableListOf<String>("1")
-                val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(types)
-                (parentFragment as TypeButtonCallback).typeButtonClick(places)
+                val type: String = retType(",")
+                val task = object : AsyncTask<Void, Void, Void>() {
+                    override fun doInBackground(vararg p0: Void?): Void? {
+                        val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(type)
+                        (parentFragment as TypeButtonCallback).typeButtonClick(places)
+                        return null
+                    }
+                }
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
             }
         }
     }
