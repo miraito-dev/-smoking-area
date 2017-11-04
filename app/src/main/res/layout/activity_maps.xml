@@ -23,41 +23,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/button4"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:layout_alignParentBottom="true">
                 <Button
@@ -68,6 +33,15 @@
                     android:layout_alignParentLeft="true"
                     android:text="Button" />
             </LinearLayout>
+
+            <fragment
+                android:id="@+id/select_type"
+                android:name="jp.co.miraito_inc.smokernavi.SelectTypeFragment"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
 
         </RelativeLayout>
 

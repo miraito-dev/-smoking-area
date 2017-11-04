@@ -4,10 +4,12 @@ import android.os.AsyncTask
 import android.support.v4.app.FragmentActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.CompoundButton
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import okhttp3.*
 import org.json.JSONArray
@@ -20,6 +22,7 @@ import javax.security.cert.CertificateException
 class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
     private var mMap: GoogleMap? = null
+    private val mMakerArray: MutableList<Marker> = mutableListOf<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,20 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        // 検索用ボタンのフラグメント
+        val selectTypeFragment = supportFragmentManager.findFragmentById(R.id.select_type)
+        val buttonList: MutableList<CompoundButton> = selectTypeFragment.getButton
+        // 取得した要素の子要素を順に取り出す
+        for (i in 0 until buttonList.count()){
+            val button: CompoundButton = buttonList.get(i)
+            // ボタンの状態を取得
+            if(!button.isChecked){
+                // onの状態ではない場合は次へ
+                continue
+            }
+            // onになっているボタンの種類を判別
+            Log.d("inamura", button.id.toString())
+        }
     }
 
 
@@ -85,8 +102,8 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 //                mOption.icon(iconimg)
 
                 runOnUiThread {
-                    // アイコン追加
-                    googleMap!!.addMarker(mOption)
+                    // アイコンを追加し、マーカー管理用のリストに追加
+                    mMakerArray.add(googleMap!!.addMarker(mOption))
                 }
 
             }
@@ -95,4 +112,10 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun clearIcon(){
+        for (i in 0 until mMakerArray.count()){
+            // 順に取り出して削除
+            mMakerArray.get(i).remove()
+        }
+    }
 }
