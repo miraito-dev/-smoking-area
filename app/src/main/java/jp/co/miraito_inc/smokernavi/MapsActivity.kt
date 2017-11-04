@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentActivity
 import android.os.Bundle
 import android.util.Log
 import com.google.android.gms.maps.*
-import android.widget.Toast
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -46,6 +45,11 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             }
         }
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+        initGoogleMapUi(mMap)
+    }
+
+    private fun initGoogleMapUi(mMap: GoogleMap)
+    {
         mMap.isMyLocationEnabled = true
 
         // 現在位置を移動してズームも変更
@@ -59,30 +63,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         // UIが被らないようにPaddingを設定
         mMap.setPadding(0, 100, 0, 100)
 
-        /*
-        val listener = object : GoogleMap.OnInfoWindowClickListener {
-            override fun onInfoWindowClick(marker : Marker) {
-                val name = marker.title
-                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
-            }
-        }
-        mMap.setOnInfoWindowClickListener(listener)
-        */
-
-        /*
-        mMap.setOnInfoWindowClickListener( object : GoogleMap.OnInfoWindowClickListener{
-            override fun onInfoWindowClick(marker : Marker) {
-                val name = marker.title
-                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
-            }
-        })
-        */
-
         mMap.setOnInfoWindowClickListener{ marker : Marker ->
-            val name = marker.title
-            // 確認用に名前を表示
-            // Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
-
             val intent = Intent(this, PlaceDetail::class.java)
             val placeDao = PlaceDao(1, marker.title, "", marker.position.latitude, marker.position.longitude);
 
