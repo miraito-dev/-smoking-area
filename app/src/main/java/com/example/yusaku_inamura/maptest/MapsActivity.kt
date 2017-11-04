@@ -4,10 +4,8 @@ import android.os.AsyncTask
 import android.support.v4.app.FragmentActivity
 import android.os.Bundle
 import android.util.Log
+import com.google.android.gms.maps.*
 
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -52,6 +50,17 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
         mMap.isMyLocationEnabled = true
+
+        // 現在位置を移動してズームも変更
+        val latLnd :LatLng = LatLng(35.685175, 139.7528)
+        val cuMove : CameraUpdate = CameraUpdateFactory.newLatLngZoom(latLnd, 14.0f)
+        mMap.moveCamera(cuMove)
+
+        // ズームボタンも表示
+        mMap.uiSettings.isZoomControlsEnabled = true
+
+        // UIが被らないようにPaddingを設定
+        mMap.setPadding(0,100,0,100)
     }
 
     private fun setPlaces(googleMap: GoogleMap) {
