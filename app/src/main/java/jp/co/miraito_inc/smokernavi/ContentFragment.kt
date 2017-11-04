@@ -1,51 +1,52 @@
 package jp.co.miraito_inc.smokernavi
 
+import android.app.Fragment
+import android.app.FragmentTransaction
 import android.content.Intent
 import android.os.AsyncTask
-import android.support.v4.app.FragmentActivity
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.util.Log
-import android.widget.CompoundButton
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.google.android.gms.maps.*
-
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-
-
-class MapsActivity : FragmentActivity() {
-
+/**
+ * Created by yusaku_inamura on 2017/11/04.
+ */
+public class ContentFragment: Fragment(), TypeButtonCallback, OnMapReadyCallback{
     private var mMap: GoogleMap? = null
     private val mMakerArray: MutableList<Marker> = mutableListOf<Marker>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-//        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-//        mapFragment.getMapAsync(this)
-        // 検索用ボタンのフラグメント
-//        val selectTypeFragment = supportFragmentManager.findFragmentById(R.id.select_type)
-//        val task = object : AsyncTask<Void, Void, Void>() {
-//            override fun doInBackground(vararg p0: Void?): Void? {
-//                setPlaces(mMap)
-//                return null
-//            }
-//        }
-//        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-//        mMap.setOnInfoWindowClickListener{ marker : Marker ->
-//            val name = marker.title
-//            // 確認用に名前を表示
-//            // Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
-//
-//            val intent = Intent(this, PlaceDetail::class.java)
-//            val placeDao = PlaceDao(1, marker.title, "", marker.position.latitude, marker.position.longitude);
-//
-//            intent.putExtra("place_dao", placeDao)
-//            startActivity(intent)
-//        }
+    companion object {
+        fun getInstance(): ContentFragment{
+            return ContentFragment()
+        }
+    }
+    // Fragmentで表示するViewを作成する
+    override public fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
+        super.onCreateView(inflater, container, savedInstanceState)
+        // フラグメント用のViewを作成
+        return inflater.inflate(R.layout.fragment_content, container, false)
+    }
+
+    override public fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
+        val mapFragment: Fragment = MapFragment()
+        val selectFragment: Fragment = SelectTypeFragment()
+        transaction.add(R.id.map ,mapFragment, "map")
+        transaction.add(R.id.select_type ,selectFragment, "select")
+        transaction.commit()
+    }
+
+
+    override fun typeButtonClick(places: MutableList<PlaceDao>){
+
     }
 
 
@@ -68,11 +69,6 @@ class MapsActivity : FragmentActivity() {
             }
         }
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-        initGoogleMapUi(mMap)
-    }
-
-    private fun initGoogleMapUi(mMap: GoogleMap)
-    {
         mMap.isMyLocationEnabled = true
 
         // 現在位置を移動してズームも変更
@@ -86,15 +82,25 @@ class MapsActivity : FragmentActivity() {
         // UIが被らないようにPaddingを設定
         mMap.setPadding(0, 100, 0, 100)
 
-        mMap.setOnInfoWindowClickListener{ marker : Marker ->
-            val intent = Intent(this, PlaceDetail::class.java)
-            val placeDao = PlaceDao(1, marker.title, "", marker.position.latitude, marker.position.longitude);
-
-            intent.putExtra("place_dao", placeDao)
-            startActivity(intent)
+        /*
+        val listener = object : GoogleMap.OnInfoWindowClickListener {
+            override fun onInfoWindowClick(marker : Marker) {
+                val name = marker.title
+                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
+            }
         }
-    }
+        mMap.setOnInfoWindowClickListener(listener)
+        */
 
+        /*
+        mMap.setOnInfoWindowClickListener( object : GoogleMap.OnInfoWindowClickListener{
+            override fun onInfoWindowClick(marker : Marker) {
+                val name = marker.title
+                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_LONG).show()
+            }
+        })
+        */
+    }
 
     private fun setPlaces(googleMap: GoogleMap) {
         val types: MutableList<String> = mutableListOf<String>()
@@ -117,7 +123,7 @@ class MapsActivity : FragmentActivity() {
 //                // アイコン画像設定
 //                mOption.icon(iconimg)
 
-                runOnUiThread {
+                activity.runOnUiThread {
                     // アイコンを追加し、マーカー管理用のリストに追加
                     mMakerArray.add(googleMap!!.addMarker(mOption))
                 }
@@ -125,13 +131,6 @@ class MapsActivity : FragmentActivity() {
             }
         } catch (e: Exception) {
             Log.d("error", e.message)
-        }
-    }
-
-    private fun clearIcon(){
-        for (i in 0 until mMakerArray.count()){
-            // 順に取り出して削除
-            mMakerArray.get(i).remove()
         }
     }
 }

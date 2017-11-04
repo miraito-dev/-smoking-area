@@ -15,7 +15,7 @@ import android.widget.LinearLayout
 /**
  * Created by yusaku_inamura on 2017/11/04.
  */
-public class SelectTypeFragment: Fragment() {
+public class SelectTypeFragment(): Fragment() {
     companion object {
         fun getInstance(): SelectTypeFragment{
             return SelectTypeFragment()
@@ -50,6 +50,18 @@ public class SelectTypeFragment: Fragment() {
         return typeStr
     }
 
+    private fun setEventListner(buttonList: MutableList<CompoundButton>){
+        // 取得した要素の子要素を順に取り出す
+        for (i in 0 until buttonList.count()){
+            val button: CompoundButton = buttonList.get(i)
+            button.setOnClickListener {
+                val types: MutableList<String> = mutableListOf<String>("1")
+                val places: MutableList<PlaceDao> = SmokerNaviApi().getPlaces(types)
+                (parentFragment as TypeButtonCallback).typeButtonClick(places)
+            }
+        }
+    }
+
     public fun getButton(): MutableList<CompoundButton>{
         val buttonList: MutableList<CompoundButton> = mutableListOf<CompoundButton>()
         // ボタンが配置されているエリアを取得
@@ -66,6 +78,4 @@ public class SelectTypeFragment: Fragment() {
         }
         return buttonList
     }
-
-//    private fun convertTypeStrById()
 }
